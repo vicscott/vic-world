@@ -9,21 +9,6 @@ struct RCB{
 	rl waitlist;//被阻塞的进程
 };
 struct RCB r[]={{"r1",1,NULL},{"r2",2,NULL},{"r3",3,NULL},{"r4",4,NULL}};
-/*int initrcb(){
-	r[0].rid = "r1";
-	r[0].status=1;
-	r[0].waitlist = initque();
-	r[1].rid = "r2";
-	r[1].status= 2;
-	r[1].waitlist = initque();
-	r[2].rid = "r3";
-	r[2].status=3;
-	r[2].waitlist = initque();
-	r[3].rid = "r4";
-	r[3].status= 4;
-	r[3].waitlist = initque();
-	return 1;
-}*/
 
 int getr(char *rid){
 	if(rid == "r1"){return 5;}
@@ -31,7 +16,7 @@ int getr(char *rid){
 	else if(rid == "r3"){return 7;}
 	else if(rid == "r4"){return 8;}
 }
-int request(char *rid,int n){
+void request(char *rid,int n){
 	//申请资源
 	int tmp = getr(rid)-5;
 	if(n <= r[tmp].status){
@@ -47,7 +32,6 @@ int request(char *rid,int n){
 		schedular();
 	}
 	//printf("%d\n",r[tmp].status);
-	return 1;
 }
 
 int release(char *rid,int n){
@@ -66,6 +50,19 @@ int de(int pid){//删除进程
 	char *m=getp(pid)->resource;
 	release(m,n);
 }
-int printbl(){
+int printres(char* rid){
+	int tmp = getr(rid)-5;
+	printf("%s: %d\n",rid,r[tmp].status);
+}
+int printbl(char *rid){
 	//打印阻塞队列，不打印头节点
+	int tmp = getr(rid)-5;
+	rl que=r[tmp].waitlist;
+	if(que.head==NULL || que.tail==NULL){
+		return 0;
+	}
+	while(que.head!=NULL&&que.head->next!=NULL){
+		printf("%s:%d\n",rid,que.head->next->pid);
+		que.head=que.head->next;
+	}
 }

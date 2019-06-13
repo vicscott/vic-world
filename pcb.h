@@ -86,16 +86,6 @@ int del(rl *que, int y){//删除元素
 	}
 	
 }
-void printque(rl que){
-	//打印队列
-	if(que.head==NULL || que.tail==NULL){
-		return;
-	}
-	while(que.head!=NULL){
-		printf("%d\n",que.head->pid);
-		que.head=que.head->next;
-	}
-}
 
 pcb_p getp(int p){
 	//根据pid获得其pcb
@@ -105,6 +95,24 @@ pcb_p getp(int p){
 		}
 	}
 }
+void printque(rl que){
+	//打印队列
+	if(que.head==NULL || que.tail==NULL){
+		return;
+	}
+	int m2[10];int m1[10];int m0[10];
+	int n2=0;int n1=0;int n0=0;
+	while(que.head!=NULL){
+		if(getp(que.head->pid)->priority==2) {m2[n2]=que.head->pid;++n2;}
+		if(getp(que.head->pid)->priority==1) {m1[n1]=que.head->pid;++n1;}
+		if(getp(que.head->pid)->priority==0) {m0[n0]=que.head->pid;++n0;}
+		que.head=que.head->next;
+	}
+	printf("2:");for(int z=0;z<n2;z++) printf("%d-",m2[z]);printf("\n");
+	printf("1:");for(int z=0;z<n1;z++) printf("%d-",m1[z]);printf("\n");
+	printf("0:");for(int z=0;z<n0;z++) printf("%d-",m0[z]);printf("\n");
+}
+
 int sort(pcb_p p,rl *que){
 	//按优先级进行插入排序
 	rl fuzhu=initque();//辅助队列
@@ -116,10 +124,8 @@ int sort(pcb_p p,rl *que){
 			out(que,&y);
 			in(&fuzhu,p->pid);
 			if(que->head != NULL){
-				
 				in(&fuzhu,que->head->pid);
 				que->head = que->head->next;
-				
 			}
 			
 			*que = fuzhu;
