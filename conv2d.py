@@ -21,15 +21,16 @@ class conv2d():
         kernel_mat = kernel.reshape(self.output_ch,self.input_ch,-1,1) #shape:[output_ch,input_ch,kernel_size^2,1]
 #         feature_mat = torch.zeros([self.input_ch,conv_times,self.kernel_size^2]) #shape:[input_ch,conv_times,kernel_size^2]
         output=[]
-        for i in range(x.shape[0]): # \u904d\u5386batch_size
+        for i in range(x.shape[0]): # traverse batch_size
             out_list=[]
             tmp_input = x[i,:,:,:].squeeze(0).reshape(x.shape[1],-1)
+#             feature_mat= torch.zeros(conv_times,self.kernel_size*self.kernel_size)
             feature_mat=[]
 
             for j in range(self.input_ch):
                 feature_mat += [torch.stack([tmp_input[j,wj:wj+self.kernel_size,hj:hj+self.kernel_size].flatten() \
-                                           for hj in range(x.shape[3]-self.kernel_size+1) \
-                                           for wj in range(x.shape[2]-self.kernel_size+1)],0)]            
+                                           for hj in range(x.shape[3]-self.kernel_size+1,self.stride) \
+                                           for wj in range(x.shape[2]-self.kernel_size+1,self.stride)],0)]            
             feature_mat=torch.stack(feature_mat,0).reshape(self.input_ch,-1,self.kernel_size*self.kernel_size).repeat([6,1,1,1])
 
             feature_mat=feature_mat@kernel_mat
@@ -40,3 +41,4 @@ class conv2d():
             
         return output.transpose(-1,-2)
 ### the result had been proved to be same with torch.nn.Conv2d, but it is obviously slower and slower!            
+### maybe flatten kernel will be faster using F.pad()
