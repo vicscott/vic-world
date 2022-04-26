@@ -27,9 +27,9 @@ class conv2d():
             feature_mat=[]
 
             for j in range(self.input_ch):
-                feature_mat += [torch.stack([tmp_input[j,jj+jjj*x.shape[2]:jj+self.kernel_size+jjj*x.shape[2]] \
-                                           for jj in range(conv_times) for jjj in range(self.kernel_size)],0)]
-            
+                feature_mat += [torch.stack([tmp_input[j,wj:wj+self.kernel_size,hj:hj+self.kernel_size].flatten() \
+                                           for hj in range(x.shape[3]-self.kernel_size+1) \
+                                           for wj in range(x.shape[2]-self.kernel_size+1)],0)]            
             feature_mat=torch.stack(feature_mat,0).reshape(self.input_ch,-1,self.kernel_size*self.kernel_size).repeat([6,1,1,1])
 
             feature_mat=feature_mat@kernel_mat
@@ -38,5 +38,5 @@ class conv2d():
 
         output=torch.stack(output,0)
             
-        return output
+        return output.transpose(-1,-2)
 ### the result had been proved to be same with torch.nn.Conv2d, but it is obviously slower and slower!            
