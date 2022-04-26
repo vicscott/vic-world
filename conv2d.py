@@ -42,3 +42,4 @@ class conv2d():
         return output.transpose(-1,-2)
 ### the result had been proved to be same with torch.nn.Conv2d, but it is obviously slower and slower!            
 ### maybe flatten kernel will be faster using F.pad()
+### this can also be done by torch.unfold()
